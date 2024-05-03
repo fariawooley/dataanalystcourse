@@ -1,0 +1,103 @@
+#CODE FOR IMAGES - VETERINARY CLINIC PROJECT
+setwd("D:\\Usuários\\Cliente\\Desktop\\cursoSQL\\inovar")
+getwd()
+#install.packages("data.table")
+library(data.table)
+library(dplyr)
+dados <- fread("plantoes.csv")
+View(dados)
+
+#grafico de barras, plantoes por mês de cada ano separado
+ano2020 <- filter(dados, ano == "2020")
+ano2021 <- filter(dados, ano == "2021")
+ano2022 <- filter(dados, ano == "2022")
+ano2023 <- filter(dados, ano == "2023")
+ano2024 <- filter(dados, ano == "2024")
+
+#install.packages("ggplot2")
+library(ggplot2)
+#cores inovar
+#FF872A #9D9D9D
+#without line
+
+a <- ggplot(data=ano2020, aes(x=mes, y=num_plantoes)) + 
+  geom_bar(colour="#FF872A", fill = "#FF872A", stat="identity",
+           position=position_dodge(),
+           linewidth=.3) +                        # Thinner lines
+  geom_text(aes(label=num_plantoes), colour='#9D9D9D',position=position_dodge(width=0.5), vjust=-0.25) +
+  xlab("Month") + ylab("Shifts") + # Set axis labels
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("2020") + ylim(0,110) +     # Set title
+  theme_bw()
+a
+
+b <- ggplot(data=ano2021, aes(x=mes, y=num_plantoes)) + 
+  geom_bar(colour="#FF872A", fill = "#FF872A", stat="identity",
+           position=position_dodge(),
+           linewidth=.3) +                        # Thinner lines
+  geom_text(aes(label=num_plantoes), colour='#9D9D9D', position=position_dodge(width=0.5), vjust=-0.25) +
+  xlab("Month") + ylab("Shifts") + # Set axis labels
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("2021") + ylim(0,110) +     # Set title
+  theme_bw()
+b
+
+c <- ggplot(data=ano2022, aes(x=mes, y=num_plantoes)) + 
+  geom_bar(colour="#FF872A", fill = "#FF872A", stat="identity",
+           position=position_dodge(),
+           linewidth=.3) +                        # Thinner lines
+  geom_text(aes(label=num_plantoes), colour='#9D9D9D', position=position_dodge(width=0.5), vjust=-0.25) +
+  xlab("Month") + ylab("Shifts") + # Set axis labels
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("2022") + ylim(0,110) +     # Set title
+  theme_bw()
+c
+
+d <- ggplot(data=ano2023, aes(x=mes, y=num_plantoes)) + 
+  geom_bar(colour="#FF872A", fill = "#FF872A", stat="identity",
+           position=position_dodge(),
+           linewidth=.3) +                        # Thinner lines
+  geom_text(aes(label=num_plantoes), colour='#9D9D9D', position=position_dodge(width=0.5), vjust=-0.25) +
+  xlab("Month") + ylab("Shifts") + # Set axis labels
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("2023") + ylim(0,110) +     # Set title
+  theme_bw()
+d
+
+e <- ggplot(data=ano2024, aes(x=mes, y=num_plantoes)) + 
+  geom_bar(colour="#FF872A", fill = "#FF872A", stat="identity",
+           position=position_dodge(),
+           linewidth=.3) +                        # Thinner lines
+  geom_text(aes(label=num_plantoes), colour='#9D9D9D', position=position_dodge(width=0.5), vjust=-0.25) +
+  xlab("Month") + ylab("Shifts") + # Set axis labels
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("2024") + ylim(0,110) +     # Set title
+  theme_bw()
+e
+
+#grafico com a média de plantoes por mês independente do ano
+ano20a23 <- filter(dados, ano == "2020" | ano == "2021" |  ano =="2022" | ano=="2023")
+dadosgraph <- ano20a23 %>% group_by(mes) %>% summarise(n = n(), mean = mean(num_plantoes), sd = sd(num_plantoes))
+f <- ggplot(dadosgraph) +
+  geom_bar( aes(x=mes, y=mean), stat="identity", fill='#FF872A', alpha=0.7) +
+  geom_errorbar( aes(x=mes, ymin=mean-sd, ymax=mean+sd), width=0.3, colour="#9D9D9D", alpha=0.9, size=0.7, position=position_dodge(0.05))+
+  theme_bw()+ ylab("Shifts") + xlab("Month")+
+  scale_x_continuous(breaks = 1:12) +
+  ggtitle("Average shifts per month from 2020 to 2023") + ylim(-10,110)   # Set title
+f
+
+library(grid)
+library(gridExtra)
+grid.arrange(a, b, c, d, e, f, ncol = 2, nrow = 3)
+
+#estatistica
+shapiro.test(ano2020$num_plantoes)
+shapiro.test(ano2021$num_plantoes)
+shapiro.test(ano2022$num_plantoes)
+shapiro.test(ano2023$num_plantoes)
+
+res.aov <- aov(num_plantoes~mes, data = ano20a23)
+summary(res.aov)
+
+pairwise.t.test(ano20a23$num_plantoes, ano20a23$mes, p.adj='fdr')
+
