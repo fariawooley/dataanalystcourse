@@ -1,0 +1,74 @@
+#Inovar Project - Brazilian Veterinary Clinic
+#All customers who have not purchased from the clinic for more than 1 year
+#Campaign to bring them back
+#Live animal owners only
+select
+  distinct(cliente_codigo),
+  cliente_nome,
+  endereco,
+  telefones,
+  ultima_venda
+from cursosql-412002.inovar.animais_e_clientes
+where date_diff(current_date, ultima_venda, month) > 12 and vivo_ou_morto = "Vivo"
+order by 1;
+
+#6 months
+select
+  distinct(cliente_codigo),
+  cliente_nome,
+  endereco,
+  telefones,
+  ultima_venda
+from cursosql-412002.inovar.animais_e_clientes
+where date_diff(current_date, ultima_venda, month) > 6 and vivo_ou_morto = "Vivo"
+order by 5;
+
+#How many shifts (after 7pm) per month
+select
+  Hora,
+  extract(month from Data) as mes,
+  extract(year from Data) as ano,
+  Dia_da_Semana
+from cursosql-412002.inovar.atendimentos
+where Data <> "2020-02-14" and (weekday between 1 and 5 and cast(Hora as time) not between "8:00:00" and "18:59:59") or weekday = 7 or (weekday = 6 and  cast(Hora as time) not between "8:00:00" and "12:59:59")
+group by 3,1,4,2
+order by 3;
+
+#How many shifts (after 7pm) per month and year
+select
+  count(data) as num_plantoes,
+  extract(month from Data) as mes,
+  extract(year from Data) as ano
+from cursosql-412002.inovar.atendimentos
+where Data <> "2020-02-14" and (weekday between 1 and 5 and cast(Hora as time) not between "8:00:00" and "18:59:59") or weekday = 7 or (weekday = 6 and  cast(Hora as time) not between "8:00:00" and "12:59:59")
+group by 2,3
+order by 3,2;
+
+#average shifts per month and year
+select
+  avg(num_plantoes) as media_plantoes,
+from (
+  select
+    count(data) as num_plantoes,
+    extract(month from Data) as mes,
+    extract(year from Data) as ano
+  from cursosql-412002.inovar.atendimentos
+  where Data <> "2020-02-14" and (weekday between 1 and 5 and cast(Hora as time) not between "8:00:00" and "18:59:59") or weekday = 7 or (weekday = 6 and  cast(Hora as time) not between "8:00:00" and "12:59:59")
+  group by 2,3
+  order by 3,2
+)
+group by mes;
+
+select
+  sum(num_plantoes) as soma_plantoes,
+from (
+  select
+    count(data) as num_plantoes,
+    extract(month from Data) as mes,
+    extract(year from Data) as ano
+  from cursosql-412002.inovar.atendimentos
+  where Data <> "2020-02-14" and (weekday between 1 and 5 and cast(Hora as time) not between "8:00:00" and "18:59:59") or weekday = 7 or (weekday = 6 and  cast(Hora as time) not between "8:00:00" and "12:59:59")
+  group by 2,3
+  order by 3,2
+)
+group by ano;
