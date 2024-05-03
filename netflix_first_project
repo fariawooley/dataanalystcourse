@@ -1,0 +1,37 @@
+#Portfolio Data Analytics
+setwd("D:\\Usuários\\Cliente\\Desktop\\Data Analytics Institute")
+
+getwd()
+#install.packages("data.table")
+library(data.table)
+dados <- fread("Netflix_Assignment_1.csv")
+View(dados)
+
+par(mfrow = c(2, 2))
+#install.packages("corrplot")
+library(corrplot)
+
+M<- cor(dados)
+M
+
+library(RColorBrewer)
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#B3E5FF", "#77AADD", "#4477AA"))
+a <- corrplot(M, method = "number", type = "upper", tl.col="black", tl.srt=45, col=brewer.pal(n=8, name="RdBu"))
+
+library(car)
+b <- pairs(dados, col = "#FCD2BB")
+b
+
+dados2 <- fread("Netflix_Assignment_1_Bars.csv")
+View(dados2)
+
+library(ggplot2)
+c <- ggplot(data=dados2, aes(x=Show, y=Minutes)) + 
+  geom_bar(colour="#CA4A3D", fill = "#CA4A3D", stat="identity",
+           position=position_dodge(),
+           size=.3) +                        # Thinner lines
+  xlab("Show") + ylab("Minutes Watched") + # Set axis labels
+  ggtitle("") +     # Set title
+  theme_bw()
+c
+
